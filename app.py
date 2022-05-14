@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_alembic import Alembic
+from accountant import dotychczasowa_historia_operacji, historia_operacji
 
 app = Flask(__name__)
 
@@ -13,29 +14,31 @@ db = SQLAlchemy(app)
 class History(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     operation_type = db.Column(db.String(120), nullable=False)
-    amount_money = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     product_name = db.Column(db.String(120), nullable=False)
     quantity = db.Column(db.Integer, nullable=True)
+
+
+def zapis_do_bazy_danych():
+    dotychczasowa_historia_operacji()
+    for polecenie in historia_operacji:
+        if polecenie[0] == "saldo":
+            element_historii = History(operation_type="saldo", price=polecenie[1], product_name=polecenie[2])
+        elif polecenie[0] == "zakup":
+            element_historii = History(operation_type="zakup", product_name=polecenie[1], price=polecenie[2],
+                                       quantity=polecenie[3])
+        elif polecenie[0] == "sprzedaz":
+            element_historii = History(operation_type="sprzedaz", product_name=polecenie[1], price=polecenie[2],
+                                       quantity=polecenie[3])
+        else:
+            break
+        db.session.add(element_historii)
 
 
 alembic = Alembic()
 alembic.init_app(app)
 
 
-# initial data on history of operations         # TODO: czy te początkowe dane mogą być wprowadzone po prostu z ręki?
-his_saldo_1 = History(operation_type="saldo", amount_money=1000000, product_name="wplata poczatkowa")
-his_saldo_2 = History(operation_type="saldo", amount_money=-140000, product_name="zus")
-his_zakup_1 = History(operation_type="zakup", product_name="raspberry", amount_money=15000, quantity=5)
-his_sprzedaz_1 = History(operation_type="sprzedaz", product_name="raspberry", amount_money=25000, quantity=5)
-his_zakup_2 = History(operation_type="zakup", product_name="jetson", amount_money=40000, quantity=5)
-his_sprzedaz_2 = History(operation_type="sprzedaz", product_name="jetson", amount_money=50000, quantity=1)
-# db.session.add(his_saldo_1)
-# db.session.query(History).filter(History.id == 2).delete()
-# db.session.add(his_saldo_2)
-# db.session.add(his_zakup_1)
-# db.session.add(his_sprzedaz_1)
-# db.session.add(his_zakup_2)
-# db.session.add(his_sprzedaz_2)
-
+zapis_do_bazy_danych()
 
 db.session.commit()
