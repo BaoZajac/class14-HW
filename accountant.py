@@ -31,7 +31,7 @@ def dotychczasowa_historia_operacji():
             else:
                 print("Błąd")
                 break
-    return historia_operacji
+    # return historia_operacji
 
 
 # przerobienie historii operacji na działania
