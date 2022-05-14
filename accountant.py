@@ -74,3 +74,5 @@ def historia_na_dzialania():
 
 # dotychczasowa_historia_operacji()
 # print(historia_operacji)
+
+# historia_na_dzialania()
