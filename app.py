@@ -9,7 +9,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database_accountant.db"
 
 db = SQLAlchemy(app)
 
-# saldo = 0
+saldo = 0
+magazyn = {"kot": 230, "wieloryb": 5}
 
 
 # stworzenie tabeli na historię operacji
@@ -41,7 +42,13 @@ def zapis_do_bazy_danych():
             db.session.add(element_historii)
             db.session.commit()
         # print("wypełniam bazę danych...")
-        historia_na_dzialania()
+        # historia_na_dzialania()
+        print(1, magazyn)
+        print(1, saldo)
+        print(1, historia_operacji)
+        return historia_operacji  # magazyn, saldo,
+    # print(2, magazyn)
+    # print(2, historia_operacji)
     # print("baza danych jest już wypełniona historycznymi danymi!")
 
 
@@ -53,11 +60,31 @@ def dane_z_formularza_internetowego():
         product_name = request.form["name"]
         product_price = request.form["price"]
         product_quantity = request.form["quantity"]
+        # print(type(product_quantity))
+        # print(type(product_price))
         element_historii = History(operation_type="sprzedaz", product_name=product_name, price=product_price,
                                    quantity=product_quantity)
         db.session.add(element_historii)
-        db.session.commit()
-        # print(magazyn)
+        if product_name in magazyn:
+            if magazyn[product_name] >= int(product_quantity):
+                # print("mamy tyle sztuk na sprzedaz")
+                db.session.commit()
+                # saldo += int(product_quantity) * int(product_price)
+            else:
+                print("za mało sztuk w magazynie")
+        # a = sum(db.session.query(History).filter(History.product_name == "sprzedaz").all())
+        # print("tuuu:", a)
+        # ilosc = 0
+        # # lista =
+        # for element in db.session.query(History).filter(History.operation_type == "zakup").all():
+        #     ilosc += int(db.session.query(History).filter(History.quantity).element)
+        #     print(ilosc)
+        # if int(product_quantity) <= ilosc:   # TODO: tak jeśli mamy dany produkt do sprzedania
+        #     print("mamy to")
+        #     db.session.commit()
+        # else:
+        #     print("Błąd")
+        # # print(magazyn)
         return redirect('/')
     return render_template('main.html')
 
@@ -68,6 +95,14 @@ alembic.init_app(app)
 
 zapis_do_bazy_danych()
 
+# historia_na_dzialania()
+
+hist = zapis_do_bazy_danych()
+
+print(3, magazyn)
+print(3, saldo)
+print(3, historia_operacji)
+print(4, hist)
 
 # db.session.query(History).filter(History.id > 0).delete()
 # db.session.commit()
