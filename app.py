@@ -4,14 +4,11 @@ from flask_alembic import Alembic
 from accountant import Manager
 
 app = Flask(__name__)
-manager = Manager("in.txt")
+# manager = Manager("in.txt")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database_accountant.db"
 
 db = SQLAlchemy(app)
-
-# saldo = 0
-# magazyn = {"kot": 230, "wieloryb": 5}
 
 
 # stworzenie tabeli na historię operacji
@@ -23,27 +20,28 @@ class History(db.Model):
     quantity = db.Column(db.Integer, nullable=True)
 
 
-# # zapis do bazy danych dotychczasowej historii operacji
-# def zapis_do_bazy_danych():
-#     loaded_history = db.session.query(History).filter(History.id == 1).first()
-#     if not loaded_history:
-#         # print("baza danych jest pusta")
-#         dotychczasowa_historia_operacji()
-#         for polecenie in historia_operacji:
-#             if polecenie[0] == "saldo":
-#                 element_historii = History(operation_type="saldo", price=polecenie[1], product_name=polecenie[2])
-#             elif polecenie[0] == "zakup":
-#                 element_historii = History(operation_type="zakup", product_name=polecenie[1], price=polecenie[2],
-#                                            quantity=polecenie[3])
-#             elif polecenie[0] == "sprzedaz":
-#                 element_historii = History(operation_type="sprzedaz", product_name=polecenie[1], price=polecenie[2],
-#                                            quantity=polecenie[3])
-#             else:
-#                 break
-#             db.session.add(element_historii)
-#             db.session.commit()
-#         # print("wypełniam bazę danych...")
-#         # historia_na_dzialania()
+# zapis do bazy danych dotychczasowej historii operacji
+def zapis_do_bazy_danych():
+    loaded_history = db.session.query(History).filter(History.id == 1).first()
+    if not loaded_history:
+        print("baza danych jest pusta")
+        manager.dotychczasowa_historia_operacji()
+        print(manager.historia_operacji)
+        for polecenie in manager.historia_operacji:
+            if polecenie[0] == "saldo":
+                element_historii = History(operation_type="saldo", price=polecenie[1], product_name=polecenie[2])
+            elif polecenie[0] == "zakup":
+                element_historii = History(operation_type="zakup", product_name=polecenie[1], price=polecenie[2],
+                                           quantity=polecenie[3])
+            elif polecenie[0] == "sprzedaz":
+                element_historii = History(operation_type="sprzedaz", product_name=polecenie[1], price=polecenie[2],
+                                           quantity=polecenie[3])
+            else:
+                break
+            db.session.add(element_historii)
+            db.session.commit()
+        # print("wypełniam bazę danych...")
+        # historia_na_dzialania()
 #         print(1, magazyn)
 #         print(1, saldo)
 #         print(1, historia_operacji)
@@ -57,19 +55,19 @@ class History(db.Model):
 @app.route('/', methods=['GET', 'POST'])
 def dane_z_formularza_internetowego():
     if request.method == "POST":
-        if request.form["operacja"] == "sprzedaz":
+        if request.form["operation_type"] == "sprzedaz":
             name = request.form["name2"]
             price = request.form["price2"]
-            amount = request.form["amount2"]
-            polecenie = ("sprzedaz", name, price, amount)
+            quantity = request.form["quantity2"]
+            polecenie = ("sprzedaz", name, price, quantity)
             manager.sprzedaz_func(polecenie)
-        elif request.form["operacja"] == "zakup":
+        elif request.form["operation_type"] == "zakup":
             name = request.form["name1"]
             price = request.form["price1"]
-            amount = request.form["amount1"]
-            polecenie = ("zakup", name, price, amount)
+            quantity = request.form["quantity1"]
+            polecenie = ("zakup", name, price, quantity)
             manager.zakup_func(polecenie)
-        elif request.form["operacja"] == "saldo":
+        elif request.form["operation_type"] == "saldo":
             name = request.form["name3"]
             price = request.form["price3"]
             polecenie = ("saldo", price, name)
@@ -113,9 +111,10 @@ def dane_z_formularza_internetowego():
 alembic = Alembic()
 alembic.init_app(app)
 
+manager = Manager("in.txt")
 
-# zapis_do_bazy_danych()
-#
+zapis_do_bazy_danych()
+
 # # historia_na_dzialania()
 #
 # hist = zapis_do_bazy_danych()
