@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Historia</title>
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+</head>
+<body>
+    <hr />
+    <h2>HISTORIA OPERACJI</h2>
+    <hr />
+    <br />
+    <h5>Historia operacji to:</h5>
+    <br />
+    <p>
+    {% for element in historia_operacji %}
+        {{ element }} <br />
+    {% endfor %}
+    </p>
+</body>
+</html>
