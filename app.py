@@ -100,8 +100,9 @@ alembic.init_app(app)
 
 manager = Manager("in.txt")
 
-# zapis_do_bazy_danych()
+zapis_do_bazy_danych()
 
 
+# do czyszczenia historii bazy danych
 # db.session.query(History).filter(History.id > 0).delete()
 # db.session.commit()
