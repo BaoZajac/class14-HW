@@ -92,3 +92,4 @@ class Manager:
                 for element2 in element:
                     f.write(element2 + "\n")
             f.write("stop" + "\n")
+
