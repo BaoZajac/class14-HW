@@ -20,7 +20,7 @@ class History(db.Model):
 
 
 # zapis do bazy danych dotychczasowej historii operacji
-def zapis_do_bazy_danych():     # TODO: gdy to uruchamiam poniżej to nie tworzy się tabela (tworzy się plik bazy danych, ale bez tabeli)
+def zapis_do_bazy_danych():     # TODO: póki nie stworzy się danej tabeli (flask db revision initial, flask db upgrade) i gdy to się uruchomi poniżej to nie stworzy się tabela (tworzy się plik bazy danych, ale bez tabeli)
     loaded_history = db.session.query(History).filter(History.id == 1).first()
     if not loaded_history:
         for polecenie in manager.historia_operacji:
